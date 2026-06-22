@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 void altas(struct Persona **ptr){
     struct Persona *p = NULL;

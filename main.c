@@ -7,7 +7,7 @@ struct Persona{
     char *nombre;
     int edad;
     char genero;
-    char fn[8];
+    char fn[9];
     struct alumno *ptrAlum;
     struct Persona *ptrSig;
 };

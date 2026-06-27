@@ -1,116 +1,98 @@
-#ifndef ALTAS_H
-#define ALTAS_H
-
 #include <stdio.h>
 #include <stdlib.h>
-
-struct Persona *nuevaPersona();
-struct alumno *nuevoAlumno();
-
-void altas(struct Persona **ptr){
-
-    struct Persona *p = NULL;
-    struct alumno *a = NULL;
-
-    p = nuevaPersona();
-
-    if(p == NULL){
-        printf("Error al crear persona\n");
-        return;
-    }
-
-    a = nuevoAlumno();
-
-    if(a == NULL){
-        printf("Error al crear alumno\n");
-        free(p->nombre);
-        free(p);
-        return;
-    }
-
-    p->ptrAlum = a;
-    p->ptrSig = NULL;
-
-    if(*ptr == NULL){
-        *ptr = p;
-    }
-    else{
-        struct Persona *aux = *ptr;
-
-        while(aux->ptrSig != NULL){
-            aux = aux->ptrSig;
-        }
-
-        aux->ptrSig = p;
-    }
-
-    printf("\nRegistro agregado correctamente\n");
-}
+#include <string.h>
 
 struct Persona *nuevaPersona(){
+    struct Persona *p =(struct Persona*)malloc(sizeof(struct Persona));
+    if(p==NULL)
+        printf("no se reservo memoria");
 
-    struct Persona *p;
+    else{
+        char nombre[50];
+        p->nombre=(char*)malloc(sizeof(strlen(nombre)));
+        printf("Nombre: \n");
+        scanf(" ");
+        fgets(nombre,50,stdin);
 
-    p = (struct Persona *)malloc(sizeof(struct Persona));
+        printf("Edad: \n");
+        scanf("%d",&p->edad);
 
-    if(p != NULL){
+        printf("Genero: \n");
+        scanf(" %s",&p->genero);
 
-        p->nombre = (char *)malloc(50*sizeof(char));
-
-        if(p->nombre == NULL){
-            free(p);
-            return NULL;
-        }
-
-        printf("Nombre: ");
-        scanf(" %[^\n]", p->nombre);
-
-        printf("Edad: ");
-        scanf("%d", &p->edad);
-
-        printf("Genero (M/F): ");
-        scanf(" %c", &p->genero);
-
-        printf("Fecha de nacimiento: ");
-        scanf("%8s", p->fn);
-
-        p->ptrAlum = NULL;
-        p->ptrSig = NULL;
+        printf("Fecha de nacimiento: \n");
+        scanf("%s",p->fn);
+        p->ptrSig=NULL;
     }
-
     return p;
 }
 
-struct alumno *nuevoAlumno(){
+struct Alumno *nuevoAlumno(){
+    struct Alumno *A = (struct Alumno *)malloc(sizeof(struct Alumno));
+    if(A == NULL) {
+        printf("No se reservo memoria para Alumno\n");
+        return NULL;
+    }
+    else {
+        printf("Matricula: \n");
+        scanf("%s", A->matricula);
 
-    struct alumno *a;
+        printf("Carrera: \n");
+        scanf("%s", A->carrera);
 
-    a = (struct alumno *)malloc(sizeof(struct alumno));
+        printf("Semestre: \n");
+        scanf(" %s", &A->semestre);
 
-    if(a != NULL){
+        printf("Correo: \n");
+        scanf("%s", A->correo);
 
-        printf("Matricula: ");
-        scanf("%7s", a->matricula);
 
-        printf("Carrera: ");
-        scanf("%4s", a->carrera);
+        printf("\n Calificaciones \n");
+        for(int i = 0; i < 5; i++){
+            for(int j = 0; j < 4; j++) {
+                A->calif[i][j] = rand()%11;// de 3 parciles, el promedio de los 3 parciales, y el ordinario
 
-        printf("Semestre: ");
-        scanf("%d", &a->semestre);
-
-        printf("Correo: ");
-        scanf("%22s", a->correo);
-
-        for(int i=0; i<5; i++){
-            for(int j=0; j<5; j++){
-
-                printf("Calificacion [%d][%d]: ", i+1, j+1);
-                scanf("%f", &a->calif[i][j]);
+                if(j < 3) {
+                    printf("Materia %d - Parcial %d: %.1f\n", i + 1, j + 1, A->calif[i][j]);
+                } else {
+                    printf("Materia %d - Ordinario: %.1f\n", i + 1, A->calif[i][j]);
+                }
             }
         }
     }
-
-    return a;
+    return A;
 }
+int  Altas(struct Persona **ptr){
+    struct Persona *P = NULL;
+    struct Alumno *A = NULL;
+    int esAlumno;
+    int b=1;
+    P=nuevaPersona();//crea nuevo nodo y retorna direccion de memoria
+    if(P==NULL){
+        b=0;
+    }
+    printf("\n¿Es Alumno? (1 para sí, 0 para no): ");
+    scanf(" %d", &esAlumno);
 
-#endif
+    if (esAlumno == 1) {
+        A=nuevoAlumno();
+        if(A==NULL){
+            b=0;
+            free(P);
+        }
+        }else{
+            P->ptrAlum=A;
+            P->ptrSig=*ptr;
+            *ptr=P;
+        }
+    return b;
+}
+void AltasVarias(struct Persona **ptr){
+    int n;
+    printf("Cuantas peronas desea dar de alta ");
+    scanf("%d",&n);
+    for(int i=0; i<n; i++){
+         Altas(ptr);
+    }
+    
+}
